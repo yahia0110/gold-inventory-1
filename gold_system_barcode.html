@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>نظام جرد الذهب بالباركود 💎</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #ca8a04 0%, #b45309 100%);
+            color: white;
+            padding: 1.2rem 1rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-bottom: 0.3rem;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            color: #fef3c7;
+        }
+
+        .container {
+            padding: 1rem;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            height: calc(100vh - 70px);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #475569;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            color: #9ca3af;
+            border: none;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: #fcd34d;
+            border-bottom-color: #eab308;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: #1e293b;
+            border: 2px solid #ca8a04;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-section h3 {
+            color: #fcd34d;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #fcd34d;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .form-group input, .form-group select {
+            padding: 0.6rem;
+            background: #0f172a;
+            color: white;
+            border: 2px solid #475569;
+            border-radius: 0.35rem;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #eab308;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            padding: 0.75rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 0.35rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #ca8a04;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .category-title {
+            color: #fcd34d;
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ca8a04;
+        }
+
+        .boxes-in-category {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .small-box {
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 0.35rem;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .small-box:active {
+            transform: scale(0.95);
+            border-color: #eab308;
+        }
+
+        .small-box.selected {
+            background: #ca8a04;
+            color: white;
+        }
+
+        .box-name {
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .box-count {
+            font-size: 0.75rem;
+            color: #fcd34d;
+            margin-bottom: 0.3rem;
+        }
+
+        .small-box.selected .box-count {
+            color: white;
+        }
+
+        .qr-icon {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .qr-icon:hover {
+            opacity: 0.7;
+        }
+
+        /* QR Code Display */
+        .qr-display {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .qr-display canvas {
+            max-width: 150px;
+            margin: 0 auto;
+        }
+
+        .qr-display img {
+            max-width: 150px;
+        }
+
+        .qr-code-id {
+            color: #1f4e78;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        /* Scanner */
+        #qr-reader {
+            width: 100% !important;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .scanner-controls {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-scanner {
+            flex: 1;
+            padding: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.35rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-scanner.stop {
+            background: #ef4444;
+        }
+
+        /* Scanned Box Info */
+        .scanned-box-info {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 3px solid #10b981;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .scanned-box-info h3 {
+            color: #10b981;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .scanned-box-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.75rem;
+            border-radius: 0.35rem;
+            border-left: 3px solid #10b981;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            color: #10b981;
+            font-weight: 900;
+        }
+
+        /* Pieces Table */
+        .pieces-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .pieces-table th {
+            background: #ca8a04;
+            color: white;
+            padding: 0.75rem;
+            text-align: right;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pieces-table td {
+            padding: 0.75rem;
+            background: #1e293b;
+            border-bottom: 1px solid #475569;
+            font-size: 0.8rem;
+        }
+
+        .pieces-table tr:nth-child(even) td {
+            background: #0f172a;
+        }
+
+        .piece-code {
+            color: #fcd34d;
+            font-weight: 700;
+        }
+
+        .piece-weight {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(180, 83, 9, 0.15) 100%);
+            border: 2px solid #ca8a04;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-section h3 {
+            color: #fcd34d;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 0.75rem;
+            border-radius: 0.35rem;
+            border-left: 3px solid #eab308;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            color: #fcd34d;
+            font-weight: 900;
+        }
+
+        /* Bottom Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border-top: 2px solid #ca8a04;
+            display: flex;
+            gap: 0;
+            padding: 0;
+        }
+
+        .btn-bottom {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-bottom:active {
+            background: rgba(234, 179, 8, 0.1);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #ca8a04 0%, #b45309 100%);
+            flex: 1.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            width: 100%;
+            border-radius: 1rem 1rem 0 0;
+            padding: 1.5rem 1rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #fcd34d;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ca8a04;
+            padding-bottom: 0.75rem;
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-submit {
+            padding: 0.9rem;
+            border: none;
+            border-radius: 0.4rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-submit.save {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-submit.cancel {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-print {
+            background: #8b5cf6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #9ca3af;
+        }
+
+        .search-box {
+            margin-bottom: 1rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #1e293b;
+            color: white;
+            border: 2px solid #475569;
+            border-radius: 0.5rem;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #eab308;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>💎 جرد الذهب بالباركود</h1>
+        <p>نظام متقدم مع QR Codes</p>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('categories')">📦 الفئات</button>
+            <button class="tab-btn" onclick="switchTab('pieces')">💍 القطع</button>
+            <button class="tab-btn" onclick="switchTab('scanner')">📱 مسح الباركود</button>
+        </div>
+
+        <!-- Tab 1: Categories -->
+        <div id="categories" class="tab-content active">
+            <div class="categories-grid" id="categoriesGrid"></div>
+        </div>
+
+        <!-- Tab 2: Pieces -->
+        <div id="pieces" class="tab-content">
+            <div class="stats-section" id="selectedBoxStats" style="display: none;">
+                <h3 id="selectedBoxTitle">العلبة المختارة</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">عدد القطع</div>
+                        <div class="stat-value" id="selectedBoxPiecesCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">إجمالي الوزن</div>
+                        <div class="stat-value" id="selectedBoxTotalWeight">0 غ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>➕ إضافة قطعة ذهبية</h3>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>اختر الفئة *</label>
+                        <select id="categorySelect" onchange="updateBoxSelect()">
+                            <option value="">اختر فئة...</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>العلبة *</label>
+                        <select id="boxSelect">
+                            <option value="">اختر علبة...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكود *</label>
+                        <input type="text" id="pieceCode" placeholder="P001">
+                    </div>
+                    <div class="form-group">
+                        <label>النوع</label>
+                        <select id="pieceType">
+                            <option>خاتم</option>
+                            <option>سوار</option>
+                            <option>عقد</option>
+                            <option>أقراط</option>
+                            <option>إسورة</option>
+                            <option>خلخال</option>
+                            <option>قلادة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الوزن (غ) *</label>
+                        <input type="number" id="pieceWeight" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                <button class="btn" onclick="addPiece()">✅ إضافة</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="pieceSearch" placeholder="ابحث عن قطعة..." onkeyup="filterAndRenderPieces()">
+            </div>
+
+            <table class="pieces-table" id="piecesTable">
+                <thead>
+                    <tr>
+                        <th>الكود</th>
+                        <th>النوع</th>
+                        <th>الوزن</th>
+                        <th>التاريخ</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="piecesBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 3: Scanner -->
+        <div id="scanner" class="tab-content">
+            <div class="form-section">
+                <h3>📱 مسح الباركود</h3>
+                <div class="scanner-controls">
+                    <button class="btn-scanner" onclick="startScanner()">▶️ بدء المسح</button>
+                    <button class="btn-scanner stop" onclick="stopScanner()">⏹️ إيقاف</button>
+                </div>
+                <div id="qr-reader" style="margin-bottom: 1rem;"></div>
+            </div>
+
+            <div id="scannedResult"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="bottom-bar">
+        <button class="btn-bottom" onclick="showAddCategoryModal()">📂 فئة</button>
+        <button class="btn-bottom btn-add" onclick="exportData()">💾 تصدير</button>
+        <button class="btn-bottom" onclick="clearAllData()">🗑️ حذف</button>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal" id="addCategoryModal">
+        <div class="modal-content">
+            <div class="modal-title">📂 إضافة فئة جديدة</div>
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>اسم الفئة *</label>
+                    <input type="text" id="categoryName" placeholder="دبل">
+                </div>
+                <div class="form-group">
+                    <label>عدد العلب *</label>
+                    <input type="number" id="categoryBoxesCount" min="1" value="3">
+                </div>
+                <div class="form-group full">
+                    <label>ملاحظات</label>
+                    <input type="text" id="categoryNotes" placeholder="وصف الفئة">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button class="btn-submit save" onclick="saveNewCategory()">✅ إنشاء</button>
+                <button class="btn-submit cancel" onclick="closeModal('addCategoryModal')">❌ إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY_CATEGORIES = 'goldCategories_v2';
+        const STORAGE_KEY_BOXES = 'goldBoxes_v2';
+        const STORAGE_KEY_PIECES = 'goldPieces_v2';
+
+        let categories = [];
+        let boxes = [];
+        let pieces = [];
+        let selectedBoxId = null;
+        let scanner = null;
+
+        // Load data
+        function loadAllData() {
+            try {
+                const savedCats = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+                const savedBoxes = localStorage.getItem(STORAGE_KEY_BOXES);
+                const savedPieces = localStorage.getItem(STORAGE_KEY_PIECES);
+                
+                if (savedCats) categories = JSON.parse(savedCats);
+                if (savedBoxes) boxes = JSON.parse(savedBoxes);
+                if (savedPieces) pieces = JSON.parse(savedPieces);
+            } catch (e) {
+                console.error('خطأ:', e);
+            }
+            refreshUI();
+        }
+
+        // Save data
+        function saveAllData() {
+            try {
+                localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
+                localStorage.setItem(STORAGE_KEY_BOXES, JSON.stringify(boxes));
+                localStorage.setItem(STORAGE_KEY_PIECES, JSON.stringify(pieces));
+            } catch (e) {
+                console.error('خطأ في الحفظ:', e);
+            }
+        }
+
+        // Refresh UI
+        function refreshUI() {
+            renderCategories();
+            filterAndRenderPieces();
+            updateCategorySelect();
+            updateStats();
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            loadAllData();
+        }
+
+        // Render categories with QR codes
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            
+            if (categories.length === 0) {
+                grid.innerHTML = '<div class="empty-state">📂 لا توجد فئات</div>';
+                return;
+            }
+
+            grid.innerHTML = categories.map(cat => {
+                const catBoxes = boxes.filter(b => b.categoryId === cat.id);
+                return `
+                    <div class="category-card">
+                        <div class="category-title">${cat.name} (${catBoxes.length} علب)</div>
+                        <div class="boxes-in-category">
+                            ${catBoxes.map(box => {
+                                const boxPieces = pieces.filter(p => p.boxId === box.id && !p.deletedAt);
+                                const totalWeight = boxPieces.reduce((sum, p) => sum + (p.weight || 0), 0).toFixed(2);
+                                const isSelected = selectedBoxId === box.id;
+                                
+                                return `
+                                    <div class="small-box ${isSelected ? 'selected' : ''}" onclick="selectBox(${box.id})">
+                                        <div class="box-name">${box.number}</div>
+                                        <div class="box-count">💍 ${boxPieces.length}</div>
+                                        <div class="box-count">⚖️ ${totalWeight}غ</div>
+                                        <div class="qr-icon" onclick="event.stopPropagation(); showQRCode(${box.id})">📱</div>
+                                        ${isSelected ? `<div class="qr-display" id="qr-${box.id}"></div>` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Generate QR codes for selected boxes
+            categories.forEach(cat => {
+                boxes.filter(b => b.categoryId === cat.id && selectedBoxId === b.id).forEach(box => {
+                    const qrContainer = document.getElementById(`qr-${box.id}`);
+                    if (qrContainer && qrContainer.innerHTML === '') {
+                        const qrText = `BOX-${box.id}`;
+                        const qrCode = new QRCode(qrContainer, {
+                            text: qrText,
+                            width: 150,
+                            height: 150,
+                            colorDark: '#1f4e78',
+                            colorLight: '#ffffff'
+                        });
+                        const printBtn = document.createElement('button');
+                        printBtn.className = 'btn-print';
+                        printBtn.textContent = '🖨️ طباعة';
+                        printBtn.onclick = () => printQRCode(box.number, qrContainer);
+                        qrContainer.appendChild(printBtn);
+                    }
+                });
+            });
+        }
+
+        // Show QR Code
+        function showQRCode(boxId) {
+            selectBox(boxId);
+        }
+
+        // Print QR Code
+        function printQRCode(boxName, qrContainer) {
+            const printWindow = window.open('', '', 'width=400,height=500');
+            const canvas = qrContainer.querySelector('canvas');
+            const qrImage = canvas.toDataURL();
+            printWindow.document.write(`
+                <html dir="rtl">
+                <head>
+                    <title>طباعة باركود</title>
+                    <style>
+                        body { font-family: Cairo, sans-serif; text-align: center; padding: 1rem; }
+                        h2 { color: #ca8a04; margin-bottom: 1rem; }
+                        img { max-width: 200px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>📦 ${boxName}</h2>
+                    <img src="${qrImage}" />
+                    <p style="margin-top: 1rem; color: #666;">امسح هذا الباركود</p>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Select box
+        function selectBox(boxId) {
+            selectedBoxId = selectedBoxId === boxId ? null : boxId;
+            renderCategories();
+            updateStats();
+        }
+
+        // Update stats
+        function updateStats() {
+            const statsDiv = document.getElementById('selectedBoxStats');
+            
+            if (!selectedBoxId) {
+                statsDiv.style.display = 'none';
+                return;
+            }
+
+            const box = boxes.find(b => b.id === selectedBoxId);
+            if (!box) return;
+
+            const boxPieces = pieces.filter(p => p.boxId === selectedBoxId && !p.deletedAt);
+            const totalWeight = boxPieces.reduce((sum, p) => sum + (p.weight || 0), 0).toFixed(2);
+
+            document.getElementById('selectedBoxTitle').textContent = `📦 ${box.number}`;
+            document.getElementById('selectedBoxPiecesCount').textContent = boxPieces.length;
+            document.getElementById('selectedBoxTotalWeight').textContent = totalWeight + ' غ';
+            
+            statsDiv.style.display = 'block';
+        }
+
+        // Show add category modal
+        function showAddCategoryModal() {
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryBoxesCount').value = '3';
+            document.getElementById('categoryNotes').value = '';
+            document.getElementById('addCategoryModal').classList.add('active');
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Save category
+        function saveNewCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            const count = parseInt(document.getElementById('categoryBoxesCount').value) || 1;
+            
+            if (!name) {
+                alert('أدخل اسم الفئة');
+                return;
+            }
+
+            const catId = Date.now();
+            categories.push({
+                id: catId,
+                name: name,
+                notes: document.getElementById('categoryNotes').value,
+                createdAt: new Date().toISOString()
+            });
+
+            for (let i = 1; i <= count; i++) {
+                boxes.push({
+                    id: catId * 1000 + i,
+                    categoryId: catId,
+                    number: `${name}-${i}`,
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            saveAllData();
+            refreshUI();
+            closeModal('addCategoryModal');
+            alert(`✅ تم إنشاء ${count} علب`);
+        }
+
+        // Update category select
+        function updateCategorySelect() {
+            const select = document.getElementById('categorySelect');
+            select.innerHTML = '<option value="">اختر فئة...</option>' + 
+                categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        // Update box select
+        function updateBoxSelect() {
+            const catId = parseInt(document.getElementById('categorySelect').value);
+            const select = document.getElementById('boxSelect');
+            
+            if (!catId) {
+                select.innerHTML = '<option value="">اختر علبة...</option>';
+                return;
+            }
+
+            const catBoxes = boxes.filter(b => b.categoryId === catId);
+            select.innerHTML = '<option value="">اختر علبة...</option>' + 
+                catBoxes.map(b => `<option value="${b.id}">${b.number}</option>`).join('');
+        }
+
+        // Add piece
+        function addPiece() {
+            const boxId = parseInt(document.getElementById('boxSelect').value);
+            const code = document.getElementById('pieceCode').value.trim();
+            const type = document.getElementById('pieceType').value;
+            const weight = parseFloat(document.getElementById('pieceWeight').value);
+
+            if (!boxId || !code || !weight) {
+                alert('ملء الحقول المطلوبة');
+                return;
+            }
+
+            pieces.push({
+                id: Date.now(),
+                boxId: boxId,
+                code: code,
+                type: type,
+                weight: weight,
+                addedAt: new Date().toISOString(),
+                deletedAt: null
+            });
+
+            document.getElementById('pieceCode').value = '';
+            document.getElementById('pieceWeight').value = '';
+
+            saveAllData();
+            refreshUI();
+            alert('✅ تمت الإضافة');
+        }
+
+        // Delete piece
+        function deletePiece(id) {
+            if (confirm('حذف القطعة؟')) {
+                const piece = pieces.find(p => p.id === id);
+                if (piece) piece.deletedAt = new Date().toISOString();
+                saveAllData();
+                refreshUI();
+            }
+        }
+
+        // Filter and render pieces
+        function filterAndRenderPieces() {
+            const search = (document.getElementById('pieceSearch')?.value || '').toLowerCase();
+            const filtered = pieces
+                .filter(p => !p.deletedAt)
+                .filter(p => selectedBoxId ? p.boxId === selectedBoxId : true)
+                .filter(p => p.code.toLowerCase().includes(search));
+
+            const tbody = document.getElementById('piecesBody');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">لا توجد قطع</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(piece => {
+                const date = new Date(piece.addedAt).toLocaleDateString('ar-SA');
+                return `
+                    <tr>
+                        <td class="piece-code">${piece.code}</td>
+                        <td>${piece.type}</td>
+                        <td class="piece-weight">${piece.weight} غ</td>
+                        <td>${date}</td>
+                        <td><button class="btn-submit cancel" style="font-size: 0.7rem; padding: 0.3rem;" onclick="deletePiece(${piece.id})">حذف</button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Start scanner
+        function startScanner() {
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader",
+                { fps: 10, qrbox: 250 },
+                false
+            );
+
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
+
+            function onScanSuccess(decodedText) {
+                const boxId = parseInt(decodedText.replace('BOX-', ''));
+                const box = boxes.find(b => b.id === boxId);
+                
+                if (box) {
+                    showScannedBoxInfo(box);
+                    html5QrcodeScanner.clear();
+                } else {
+                    alert('❌ لم يتم العثور على العلبة');
+                }
+            }
+
+            function onScanError(error) {
+                // Ignore scanning errors
+            }
+        }
+
+        // Stop scanner
+        function stopScanner() {
+            Html5Qrcode.getCameras().then(() => {
+                if (Html5Qrcode.getRunningInstance) {
+                    Html5Qrcode.getRunningInstance().stop();
+                }
+            });
+        }
+
+        // Show scanned box info
+        function showScannedBoxInfo(box) {
+            const boxPieces = pieces.filter(p => p.boxId === box.id && !p.deletedAt);
+            const totalWeight = boxPieces.reduce((sum, p) => sum + (p.weight || 0), 0).toFixed(2);
+            const cat = categories.find(c => c.id === box.categoryId);
+
+            let html = `
+                <div class="scanned-box-info">
+                    <h3>✅ ${box.number}</h3>
+                    <div class="scanned-box-details">
+                        <div class="detail-item">
+                            <div class="detail-label">الفئة</div>
+                            <div class="detail-value">${cat?.name}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">عدد القطع</div>
+                            <div class="detail-value">${boxPieces.length}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">إجمالي الوزن</div>
+                            <div class="detail-value">${totalWeight} غ</div>
+                        </div>
+                    </div>
+
+                    <h4 style="color: #fcd34d; margin: 1rem 0 0.75rem 0;">📋 القطع:</h4>
+                    <table class="pieces-table" style="margin-top: 0;">
+                        <thead>
+                            <tr>
+                                <th>الكود</th>
+                                <th>النوع</th>
+                                <th>الوزن</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${boxPieces.length > 0 
+                                ? boxPieces.map(p => `
+                                    <tr>
+                                        <td class="piece-code">${p.code}</td>
+                                        <td>${p.type}</td>
+                                        <td class="piece-weight">${p.weight} غ</td>
+                                    </tr>
+                                `).join('')
+                                : '<tr><td colspan="3" style="text-align: center; color: #9ca3af;">علبة فارغة</td></tr>'
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('scannedResult').innerHTML = html;
+        }
+
+        // Export data
+        function exportData() {
+            if (pieces.filter(p => !p.deletedAt).length === 0) {
+                alert('لا توجد بيانات');
+                return;
+            }
+
+            let csv = 'الفئة,العلبة,الكود,النوع,الوزن,التاريخ\n';
+            pieces.filter(p => !p.deletedAt).forEach(p => {
+                const box = boxes.find(b => b.id === p.boxId);
+                const cat = box ? categories.find(c => c.id === box.categoryId) : null;
+                const date = new Date(p.addedAt).toLocaleDateString('ar-SA');
+                csv += `${cat?.name || '-'},${box?.number || '-'},${p.code},${p.type},${p.weight},${date}\n`;
+            });
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/csv;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
+            element.setAttribute('download', `جرد_${new Date().toLocaleDateString('ar-SA')}.csv`);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            alert('✅ تم التصدير');
+        }
+
+        // Clear all
+        function clearAllData() {
+            if (confirm('حذف الكل؟') && confirm('متأكد؟')) {
+                localStorage.clear();
+                categories = [];
+                boxes = [];
+                pieces = [];
+                selectedBoxId = null;
+                refreshUI();
+                alert('✅ تم');
+            }
+        }
+
+        // Close modal on background click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        window.addEventListener('load', loadAllData);
+        setInterval(saveAllData, 3000);
+    </script>
+</body>
+</html>
